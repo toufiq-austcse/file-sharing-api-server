@@ -21,11 +21,12 @@ class LocalStorageProvider extends StorageProvider {
 		await fs.writeFile(
 			metaPath,
 			JSON.stringify({
-				privateKey,
-				originalName: file.originalname,
-				mimeType: file.mimetype,
+				private_key: privateKey,
+				public_key: publicKey,
+				original_name: file.originalname,
+				mime_type: file.mimetype,
 				size: file.size,
-				uploadedAt: new Date().toISOString(),
+				uploaded_at: new Date().toISOString(),
 			})
 		);
 
@@ -41,8 +42,8 @@ class LocalStorageProvider extends StorageProvider {
 
 		return {
 			stream: createReadStream(filePath),
-			mimeType: metaData.mimeType,
-			originalName: metaData.originalName,
+			mime_type: metaData.mime_type,
+			original_name: metaData.original_name,
 		};
 	}
 
@@ -54,9 +55,8 @@ class LocalStorageProvider extends StorageProvider {
 				const metaPath = path.join(this.rootFolder, file);
 				const metaData = JSON.parse(await fs.readFile(metaPath, 'utf8'));
 
-				if (metaData.privateKey === privateKey) {
-					const publicKey = file.replace('.meta.json', '');
-					await fs.unlink(path.join(this.rootFolder, publicKey));
+				if (metaData.private_key === privateKey) {
+					await fs.unlink(path.join(this.rootFolder, metaData.public_key));
 					await fs.unlink(metaPath);
 					return true;
 				}
