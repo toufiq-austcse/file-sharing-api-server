@@ -14,7 +14,7 @@ const start = async (options) => {
 	const app = await createApp(options);
 	app.use('/api', apiRoutes);
 
-	return app.listen(port, function () {
+	return app.listen(port, () => {
 		console.log(`server started on port ${port}`);
 	});
 };

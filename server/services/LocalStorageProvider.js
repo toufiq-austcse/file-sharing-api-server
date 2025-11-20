@@ -6,7 +6,7 @@ const { createReadStream } = require('fs');
 class LocalStorageProvider extends StorageProvider {
 	constructor(rootFolder) {
 		super();
-		this.rootFolder = rootFolder;
+		this.rootFolder = rootFolder || './uploads';
 	}
 
 	async upload(file, publicKey, privateKey) {

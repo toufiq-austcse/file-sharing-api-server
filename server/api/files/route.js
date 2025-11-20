@@ -12,7 +12,7 @@ const router = express.Router({ mergeParams: true });
 const LocalStorageProvider = require('../../services/LocalStorageProvider');
 const FileService = require('../../services/FileService');
 
-const localStorageProvider = new LocalStorageProvider('./uploads');
+const localStorageProvider = new LocalStorageProvider(process.env.FOLDER);
 const fileService = new FileService(localStorageProvider);
 
 router.post('/', upload.single('file'), async (req, res) => {
