@@ -1,0 +1,80 @@
+const StorageProvider = require('./StorageProvider');
+const path = require('path');
+const fs = require('fs').promises;
+const { createReadStream } = require('fs');
+
+class LocalStorageProvider extends StorageProvider {
+	constructor(rootFolder) {
+		super();
+		this.rootFolder = rootFolder;
+	}
+
+	async upload(file, publicKey, privateKey) {
+		const filePath = path.join(this.rootFolder, publicKey);
+		const metaPath = path.join(this.rootFolder, `${publicKey}.meta.json`);
+
+		await fs.mkdir(this.rootFolder, { recursive: true });
+
+		await fs.copyFile(file.path, filePath);
+		await fs.unlink(file.path);
+
+		await fs.writeFile(
+			metaPath,
+			JSON.stringify({
+				privateKey,
+				originalName: file.originalname,
+				mimeType: file.mimetype,
+				size: file.size,
+				uploadedAt: new Date().toISOString(),
+			})
+		);
+
+		return { publicKey, privateKey };
+	}
+
+	async download(publicKey) {
+		const filePath = path.join(this.rootFolder, publicKey);
+		const metaPath = path.join(this.rootFolder, `${publicKey}.meta.json`);
+
+		const metaData = JSON.parse(await fs.readFile(metaPath, 'utf8'));
+		await fs.utimes(metaPath, new Date(), new Date());
+
+		return {
+			stream: createReadStream(filePath),
+			mimeType: metaData.mimeType,
+			originalName: metaData.originalName,
+		};
+	}
+
+	async delete(privateKey) {
+		const files = await fs.readdir(this.rootFolder);
+
+		for (const file of files) {
+			if (file.endsWith('.meta.json')) {
+				const metaPath = path.join(this.rootFolder, file);
+				const metaData = JSON.parse(await fs.readFile(metaPath, 'utf8'));
+
+				if (metaData.privateKey === privateKey) {
+					const publicKey = file.replace('.meta.json', '');
+					await fs.unlink(path.join(this.rootFolder, publicKey));
+					await fs.unlink(metaPath);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	async exists(publicKey) {
+		const filePath = path.join(this.rootFolder, publicKey);
+		try {
+			await fs.access(filePath);
+			return true;
+		} catch {
+			return false;
+		}
+	}
+}
+
+module.exports = LocalStorageProvider;
