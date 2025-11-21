@@ -11,11 +11,13 @@ const router = express.Router({ mergeParams: true });
 
 const LocalStorageProvider = require('../../services/LocalStorageProvider');
 const FileService = require('../../services/FileService');
+const { uploadLimiter } = require('../../middleware/uploadLimiter');
+const { downloadLimiter } = require('../../middleware/downloadLimiter');
 
 const localStorageProvider = new LocalStorageProvider(process.env.FOLDER);
 const fileService = new FileService(localStorageProvider);
 
-router.post('/', upload.single('file'), async (req, res) => {
+router.post('/', uploadLimiter({}), upload.single('file'), async (req, res) => {
 	try {
 		let result = await fileService.uploadFile(req.file);
 		return res.status(statusCodes.OK).send(result);
@@ -24,7 +26,7 @@ router.post('/', upload.single('file'), async (req, res) => {
 	}
 });
 
-router.get('/:publicKey', async (req, res) => {
+router.get('/:publicKey', downloadLimiter({}), async (req, res) => {
 	try {
 		const publicKey = req.params.publicKey;
 		if (!publicKey) {
