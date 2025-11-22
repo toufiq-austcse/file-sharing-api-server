@@ -8,7 +8,7 @@ const INACTIVITY_PERIOD_MS =
 const cleanupInactiveFiles = async () => {
 	try {
 		console.log('Starting cleanup of inactive files...');
-		const uploadsDir = path.join(__dirname, '../../uploads');
+		const uploadsDir = config.getRootFolder();
 		const files = await fs.readdir(uploadsDir);
 		const now = Date.now();
 		let deletedCount = 0;

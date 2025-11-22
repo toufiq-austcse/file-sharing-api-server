@@ -4,11 +4,20 @@ const config = require('../../../config/default');
  * Manage graceful shutdown of the server.
  * @param server
  */
-const manage = (server) => {
+const manage = (server, stopJobs) => {
 	let connections = [];
 
-	let shutDown = () => {
+	let shutDown = async () => {
 		console.log('Received kill signal, shutting down gracefully');
+
+		if (stopJobs && typeof stopJobs === 'function') {
+			try {
+				await stopJobs();
+				console.log('Background jobs stopped');
+			} catch (error) {
+				console.error('Error stopping jobs:', error);
+			}
+		}
 
 		server.close(() => {
 			console.log('Closed out remaining connections');

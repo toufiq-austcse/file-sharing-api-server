@@ -1,3 +1,8 @@
+const DEFAULT_ROOT_FOLDER = './uploads';
+
+const getRootFolder = () => {
+	return process.env.ROOT_FOLDER || DEFAULT_ROOT_FOLDER;
+};
 module.exports = {
 	SERVER_NAME: 'file-sharing-api-server',
 	DEFAULT_PORT: 3000,
@@ -7,4 +12,5 @@ module.exports = {
 	DAILY_DOWNLOAD_LIMIT_BYTES: 2081052,
 	FILE_CLEANUP_INACTIVITY_MINUTES: 2,
 	FILE_CLEANUP_CRON: '* * * * *',
+	getRootFolder,
 };

@@ -2,7 +2,7 @@ const { initiate } = require('./core/bootstrapper');
 const { manage } = require('./core/shutdownmanager');
 const config = require('../config/default');
 const apiRoutes = require('./api');
-const { initializeJobs } = require('./jobs');
+const { initializeJobs, stopJobs } = require('./jobs');
 
 const createApp = async () => {
 	return initiate();
@@ -13,7 +13,7 @@ const start = async (options) => {
 	const port = options.port || config.DEFAULT_PORT;
 
 	const app = await createApp(options);
-	app.use('/api', apiRoutes);
+	app.use(apiRoutes);
 
 	return app.listen(port, () => {
 		console.log(`server started on port ${port}`);
@@ -24,7 +24,7 @@ const startJobs = async () => {
 };
 
 const autoManageShutdown = (server) => {
-	manage(server);
+	manage(server, stopJobs);
 };
 
 module.exports = {

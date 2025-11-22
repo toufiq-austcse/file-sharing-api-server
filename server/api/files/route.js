@@ -13,8 +13,9 @@ const LocalStorageProvider = require('../../services/LocalStorageProvider');
 const FileService = require('../../services/FileService');
 const { uploadLimiter } = require('../../middleware/uploadLimiter');
 const { downloadLimiter } = require('../../middleware/downloadLimiter');
+const { getRootFolder } = require('../../../config/default');
 
-const localStorageProvider = new LocalStorageProvider(process.env.FOLDER);
+const localStorageProvider = new LocalStorageProvider(getRootFolder());
 const fileService = new FileService(localStorageProvider);
 
 router.post('/', uploadLimiter({}), upload.single('file'), async (req, res) => {

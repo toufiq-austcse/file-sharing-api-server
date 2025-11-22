@@ -2,11 +2,12 @@ const StorageProvider = require('./StorageProvider');
 const path = require('path');
 const fs = require('fs').promises;
 const { createReadStream } = require('fs');
+const config = require('../../config/default');
 
 class LocalStorageProvider extends StorageProvider {
 	constructor(rootFolder) {
 		super();
-		this.rootFolder = rootFolder || './uploads';
+		this.rootFolder = rootFolder || config.DEFAULT_ROOT_FOLDER;
 	}
 
 	async upload(file, publicKey, privateKey) {
