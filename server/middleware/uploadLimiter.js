@@ -17,6 +17,9 @@ const uploadLimiter = (options = {}) => {
 		const incomingUpload = Number(req.headers['content-length'] || 0);
 
 		if (usage.uploaded_bytes >= uploadLimitInBytes) {
+			console.log('Upload limit exceeded for IP:', ip);
+
+			console.log(usage.uploaded_bytes, '>=', uploadLimitInBytes);
 			return res.status(statusCodes.TOO_MANY_REQUESTS).json({ error: 'Daily traffic limit exceeded' });
 		}
 

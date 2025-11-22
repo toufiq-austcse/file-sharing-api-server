@@ -20,6 +20,9 @@ const fileService = new FileService(localStorageProvider);
 
 router.post('/', uploadLimiter({}), upload.single('file'), async (req, res) => {
 	try {
+		if (!req.file) {
+			return res.status(statusCodes.BAD_REQUEST).json({ error: 'file is required' });
+		}
 		let result = await fileService.uploadFile(req.file);
 		return res.status(statusCodes.OK).send(result);
 	} catch (e) {

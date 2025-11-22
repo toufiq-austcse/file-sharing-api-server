@@ -48,8 +48,6 @@ const downloadLimiter = (options = {}) => {
 			}
 		});
 
-		res.setHeader('X-Traffic-Download', String(downloadLimitInBytes));
-
 		next();
 	};
 };

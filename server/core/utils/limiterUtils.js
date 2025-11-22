@@ -33,7 +33,23 @@ const createUsageTracker = () => {
 };
 
 const getClientIP = (req) => {
-	return req.ip || req.connection?.remoteAddress || 'unknown';
+	const forwarded = req.headers['x-forwarded-for'];
+	if (forwarded) {
+		return forwarded.split(',')[0].trim();
+	}
+
+	return (
+		req.headers['x-real-ip'] ||
+		req.headers['cf-connecting-ip'] ||
+		req.headers['x-client-ip'] ||
+		req.headers['x-forwarded'] ||
+		req.headers['forwarded-for'] ||
+		req.headers['forwarded'] ||
+		req.connection?.remoteAddress ||
+		req.socket?.remoteAddress ||
+		req.ip ||
+		'unknown'
+	);
 };
 
 module.exports = {
