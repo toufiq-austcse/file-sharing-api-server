@@ -14,6 +14,9 @@ class StorageProvider {
 	async exists(publicKey) {
 		throw new Error('Method not implemented');
 	}
+	async cleanupInactiveFiles(inactivityPeriodMs) {
+		throw new Error('Method not implemented');
+	}
 }
 
 module.exports = StorageProvider;

@@ -2,12 +2,11 @@ const StorageProvider = require('./StorageProvider');
 const path = require('path');
 const fs = require('fs').promises;
 const { createReadStream } = require('fs');
-const config = require('../../config/default');
 
 class LocalStorageProvider extends StorageProvider {
 	constructor(rootFolder) {
 		super();
-		this.rootFolder = rootFolder || config.DEFAULT_ROOT_FOLDER;
+		this.rootFolder = rootFolder;
 	}
 
 	async upload(file, publicKey, privateKey) {
@@ -77,6 +76,44 @@ class LocalStorageProvider extends StorageProvider {
 			return true;
 		} catch {
 			return false;
+		}
+	}
+
+	async cleanupInactiveFiles(inactivityPeriodMs) {
+		try {
+			console.log('Starting cleanup of inactive files...');
+			const uploadsDir = this.rootFolder;
+			const files = await fs.readdir(uploadsDir);
+			const now = Date.now();
+			let deletedCount = 0;
+
+			for (const file of files) {
+				if (file.endsWith('.meta.json')) continue;
+
+				const filePath = path.join(uploadsDir, file);
+				const metaPath = path.join(uploadsDir, `${file}.meta.json`);
+
+				try {
+					const stats = await fs.stat(filePath);
+					const inactiveDuration = now - stats.atimeMs;
+
+					if (inactiveDuration > inactivityPeriodMs) {
+						await fs.unlink(filePath);
+						await fs.unlink(metaPath);
+
+						deletedCount++;
+						console.log(
+							`Deleted inactive file and metadata: ${file} (inactive for ${Math.floor(inactiveDuration / (60 * 1000))} minutes)`
+						);
+					}
+				} catch (error) {
+					console.error(`Error processing file ${file}:`, error);
+				}
+			}
+
+			console.log(`Cleanup completed. Deleted ${deletedCount} file(s) and their metadata`);
+		} catch (error) {
+			console.error('File cleanup error:', error);
 		}
 	}
 }
