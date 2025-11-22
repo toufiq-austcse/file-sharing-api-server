@@ -13,5 +13,7 @@ function options() {
  */
 (async function () {
 	const service = await server.start(options());
+	await server.startJobs();
+
 	server.autoManageShutdown(service);
 })();

@@ -34,11 +34,14 @@ class LocalStorageProvider extends StorageProvider {
 	}
 
 	async download(publicKey) {
+		const currentTime = new Date();
 		const filePath = path.join(this.rootFolder, publicKey);
 		const metaPath = path.join(this.rootFolder, `${publicKey}.meta.json`);
 
 		const metaData = JSON.parse(await fs.readFile(metaPath, 'utf8'));
-		await fs.utimes(metaPath, new Date(), new Date());
+
+		await fs.utimes(metaPath, currentTime, currentTime);
+		await fs.utimes(metaPath, currentTime, currentTime);
 
 		return {
 			stream: createReadStream(filePath),
