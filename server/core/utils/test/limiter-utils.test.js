@@ -4,7 +4,7 @@ const {
 	getClientIP,
 	byteLen,
 	shouldCountBytes,
-} = require('../limiterUtils');
+} = require('../limiter-utils');
 
 jest.mock('../../../../config/default', () => ({
 	DAILY_DOWNLOAD_LIMIT_BYTES: 1000000,

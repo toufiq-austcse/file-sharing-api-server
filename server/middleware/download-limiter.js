@@ -6,7 +6,7 @@ const {
 	getClientIP,
 	byteLen,
 	shouldCountBytes,
-} = require('../core/utils/limiterUtils');
+} = require('../core/utils/limiter-utils');
 
 const DEFAULT_DOWNLOAD_LIMIT_IN_BYTES = Number(
 	process.env.DAILY_DOWNLOAD_LIMIT_BYTES || config.DAILY_DOWNLOAD_LIMIT_BYTES

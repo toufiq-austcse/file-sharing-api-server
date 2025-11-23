@@ -11,8 +11,8 @@ const router = express.Router({ mergeParams: true });
 
 const LocalStorageProvider = require('../../services/LocalStorageProvider');
 const FileService = require('../../services/FileService');
-const { uploadLimiter } = require('../../middleware/uploadLimiter');
-const { downloadLimiter } = require('../../middleware/downloadLimiter');
+const { uploadLimiter } = require('../../middleware/upload-limiter');
+const { downloadLimiter } = require('../../middleware/download-limiter');
 const { getRootFolder } = require('../../../config/default');
 
 const localStorageProvider = new LocalStorageProvider(getRootFolder());

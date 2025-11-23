@@ -1,17 +1,17 @@
-const { uploadLimiter } = require('../uploadLimiter');
+const { uploadLimiter } = require('../upload-limiter');
 const statusCodes = require('http-status-codes');
 
 jest.mock('../../../config/default', () => ({
 	DAILY_UPLOAD_LIMIT_BYTES: 1000000,
 }));
 
-jest.mock('../../core/utils/limiterUtils', () => ({
+jest.mock('../../core/utils/limiter-utils', () => ({
 	getStartOfUTCDayString: jest.fn(() => '2024-01-01'),
 	createUsageTracker: jest.fn(),
 	getClientIP: jest.fn(),
 }));
 
-const { createUsageTracker, getClientIP } = require('../../core/utils/limiterUtils');
+const { createUsageTracker, getClientIP } = require('../../core/utils/limiter-utils');
 
 describe('uploadLimiter', () => {
 	let req, res, next, mockGetUsageForIPAndDay;

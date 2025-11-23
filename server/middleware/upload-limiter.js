@@ -1,6 +1,6 @@
 const config = require('../../config/default');
 const statusCodes = require('http-status-codes');
-const { getStartOfUTCDayString, createUsageTracker, getClientIP } = require('../core/utils/limiterUtils');
+const { getStartOfUTCDayString, createUsageTracker, getClientIP } = require('../core/utils/limiter-utils');
 
 const DEFAULT_UPLOAD_LIMIT_IN_BYTES = Number(process.env.DAILY_UPLOAD_LIMIT_BYTES || config.DAILY_UPLOAD_LIMIT_BYTES);
 
