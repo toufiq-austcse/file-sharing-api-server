@@ -29,11 +29,11 @@ describe('Files API Integration Tests', () => {
 			expect(response.body).toHaveProperty('error');
 		});
 		it('should work within realistic upload limits', async () => {
-			const testContent = 'Small test file for upload limit testing';
+			const testContent = 'Small tests file for upload limit testing';
 
 			const response = await request(app)
 				.post('/files')
-				.attach('file', Buffer.from(testContent), 'test-upload-limit.txt')
+				.attach('file', Buffer.from(testContent), 'tests-upload-limit.txt')
 				.set('X-Forwarded-For', '192.168.1.250');
 
 			expect(response.status).toBe(statusCodes.OK);
@@ -115,9 +115,9 @@ describe('Files API Integration Tests', () => {
 		});
 
 		it('should track download limits per IP separately', async () => {
-			const testContent = 'Content for IP separation test';
+			const testContent = 'Content for IP separation tests';
 
-			const uploadResponse = await request(app).post('/files').attach('file', Buffer.from(testContent), 'ip-test.txt');
+			const uploadResponse = await request(app).post('/files').attach('file', Buffer.from(testContent), 'ip-tests.txt');
 			const publicKey = uploadResponse.body.publicKey;
 
 			const ip1Response = await request(app).get(`/files/${publicKey}`).set('X-Forwarded-For', '192.168.1.101');

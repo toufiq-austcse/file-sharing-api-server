@@ -5,14 +5,14 @@ const path = require('path');
 
 describe('LocalStorageProvider', () => {
 	let provider;
-	const testRootFolder = path.join(__dirname, 'test-storage');
+	const testRootFolder = path.join(__dirname, 'tests-storage');
 
 	beforeAll(async () => {
 		provider = new LocalStorageProvider(testRootFolder);
 	});
 
 	beforeEach(async () => {
-		// Clean up test directory
+		// Clean up tests directory
 		if (existsSync(testRootFolder)) {
 			await fs.rm(testRootFolder, { recursive: true, force: true });
 		}
@@ -34,13 +34,13 @@ describe('LocalStorageProvider', () => {
 	describe('upload', () => {
 		it('should upload file successfully', async () => {
 			const testFile = {
-				path: path.join(__dirname, 'temp-test-file.txt'),
-				originalname: 'test.txt',
+				path: path.join(__dirname, 'temp-tests-file.txt'),
+				originalname: 'tests.txt',
 				mimetype: 'text/plain',
 				size: 12,
 			};
 
-			await fs.writeFile(testFile.path, 'test content');
+			await fs.writeFile(testFile.path, 'tests content');
 
 			const publicKey = 'pub123';
 			const privateKey = 'priv456';
@@ -51,7 +51,7 @@ describe('LocalStorageProvider', () => {
 
 			const filePath = path.join(testRootFolder, publicKey);
 			const content = await fs.readFile(filePath, 'utf8');
-			expect(content).toBe('test content');
+			expect(content).toBe('tests content');
 
 			const metaPath = path.join(testRootFolder, `${publicKey}.meta.json`);
 			const metaContent = await fs.readFile(metaPath, 'utf8');
@@ -59,7 +59,7 @@ describe('LocalStorageProvider', () => {
 
 			expect(metadata.private_key).toBe(privateKey);
 			expect(metadata.public_key).toBe(publicKey);
-			expect(metadata.original_name).toBe('test.txt');
+			expect(metadata.original_name).toBe('tests.txt');
 			expect(metadata.mime_type).toBe('text/plain');
 			expect(metadata.size).toBe(12);
 			expect(metadata.uploaded_at).toBeDefined();
@@ -67,7 +67,7 @@ describe('LocalStorageProvider', () => {
 
 		it('should create root folder if it does not exist', async () => {
 			const testFile = {
-				path: path.join(__dirname, 'temp-test-file2.txt'),
+				path: path.join(__dirname, 'temp-tests-file2.txt'),
 				originalname: 'test2.txt',
 				mimetype: 'text/plain',
 				size: 5,
@@ -85,17 +85,17 @@ describe('LocalStorageProvider', () => {
 		let publicKey, privateKey;
 
 		beforeEach(async () => {
-			publicKey = 'download-test-public-key';
-			privateKey = 'download-test-private-key';
+			publicKey = 'download-tests-public-key';
+			privateKey = 'download-tests-private-key';
 
 			const testFile = {
 				path: path.join(__dirname, 'download-temp.txt'),
-				originalname: 'download-test.txt',
+				originalname: 'download-tests.txt',
 				mimetype: 'text/plain',
 				size: 13,
 			};
 
-			await fs.writeFile(testFile.path, 'download test');
+			await fs.writeFile(testFile.path, 'download tests');
 			await provider.upload(testFile, publicKey, privateKey);
 		});
 
@@ -104,7 +104,7 @@ describe('LocalStorageProvider', () => {
 
 			expect(result.stream).toBeDefined();
 			expect(result.mime_type).toBe('text/plain');
-			expect(result.original_name).toBe('download-test.txt');
+			expect(result.original_name).toBe('download-tests.txt');
 			expect(typeof result.stream.pipe).toBe('function');
 		});
 
@@ -130,17 +130,17 @@ describe('LocalStorageProvider', () => {
 		let publicKey, privateKey;
 
 		beforeEach(async () => {
-			publicKey = 'delete-test-public-key';
-			privateKey = 'delete-test-private-key';
+			publicKey = 'delete-tests-public-key';
+			privateKey = 'delete-tests-private-key';
 
 			const testFile = {
 				path: path.join(__dirname, 'delete-temp.txt'),
-				originalname: 'delete-test.txt',
+				originalname: 'delete-tests.txt',
 				mimetype: 'text/plain',
 				size: 11,
 			};
 
-			await fs.writeFile(testFile.path, 'delete test');
+			await fs.writeFile(testFile.path, 'delete tests');
 			await provider.upload(testFile, publicKey, privateKey);
 		});
 
@@ -177,15 +177,15 @@ describe('LocalStorageProvider', () => {
 
 	describe('exists', () => {
 		it('should return true for existing file', async () => {
-			const publicKey = 'exists-test-public-key';
+			const publicKey = 'exists-tests-public-key';
 			const testFile = {
 				path: path.join(__dirname, 'exists-temp.txt'),
-				originalname: 'exists-test.txt',
+				originalname: 'exists-tests.txt',
 				mimetype: 'text/plain',
 				size: 10,
 			};
 
-			await fs.writeFile(testFile.path, 'exists test');
+			await fs.writeFile(testFile.path, 'exists tests');
 			await provider.upload(testFile, publicKey, 'priv123');
 
 			const result = await provider.exists(publicKey);

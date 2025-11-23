@@ -58,10 +58,10 @@ describe('FileService', () => {
 
 	describe('uploadFile', () => {
 		const mockFile = {
-			originalname: 'test.txt',
+			originalname: 'tests.txt',
 			mimetype: 'text/plain',
 			size: 100,
-			path: '/tmp/test.txt',
+			path: '/tmp/tests.txt',
 		};
 
 		it('should upload file and return keys', async () => {
@@ -113,13 +113,13 @@ describe('FileService', () => {
 	});
 
 	describe('downloadFile', () => {
-		const testPublicKey = 'test-public-key-123';
+		const testPublicKey = 'tests-public-key-123';
 
 		it('should download file with public key', async () => {
 			const mockDownloadResult = {
 				stream: 'mock-stream',
 				mime_type: 'text/plain',
-				original_name: 'test.txt',
+				original_name: 'tests.txt',
 			};
 			mockStorageProvider.download.mockResolvedValue(mockDownloadResult);
 
@@ -151,7 +151,7 @@ describe('FileService', () => {
 	});
 
 	describe('deleteFile', () => {
-		const testPrivateKey = 'test-private-key-456';
+		const testPrivateKey = 'tests-private-key-456';
 
 		it('should delete file with private key', async () => {
 			mockStorageProvider.delete.mockResolvedValue(true);

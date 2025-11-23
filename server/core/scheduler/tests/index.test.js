@@ -18,7 +18,7 @@ describe('Scheduler', () => {
 	describe('scheduleJob', () => {
 		it('should schedule a job with cron expression', () => {
 			const task = jest.fn();
-			scheduler.scheduleJob('test-job', '0 * * * *', task);
+			scheduler.scheduleJob('tests-job', '0 * * * *', task);
 
 			expect(cron.schedule).toHaveBeenCalledWith('0 * * * *', task, {
 				scheduled: false,
@@ -27,16 +27,16 @@ describe('Scheduler', () => {
 
 		it('should store job in jobs map', () => {
 			const task = jest.fn();
-			scheduler.scheduleJob('test-job', '0 * * * *', task);
+			scheduler.scheduleJob('tests-job', '0 * * * *', task);
 
-			expect(scheduler.jobs.has('test-job')).toBe(true);
+			expect(scheduler.jobs.has('tests-job')).toBe(true);
 		});
 	});
 
 	describe('startJob', () => {
 		it('should start a scheduled job', () => {
-			scheduler.scheduleJob('test-job', '0 * * * *', jest.fn());
-			scheduler.startJob('test-job');
+			scheduler.scheduleJob('tests-job', '0 * * * *', jest.fn());
+			scheduler.startJob('tests-job');
 
 			expect(mockJob.start).toHaveBeenCalled();
 		});
@@ -50,8 +50,8 @@ describe('Scheduler', () => {
 
 	describe('stopJob', () => {
 		it('should stop a running job', () => {
-			scheduler.scheduleJob('test-job', '0 * * * *', jest.fn());
-			scheduler.stopJob('test-job');
+			scheduler.scheduleJob('tests-job', '0 * * * *', jest.fn());
+			scheduler.stopJob('tests-job');
 
 			expect(mockJob.stop).toHaveBeenCalled();
 		});
