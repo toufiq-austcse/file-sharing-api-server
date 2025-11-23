@@ -1,14 +1,13 @@
 const scheduler = require('../core/scheduler');
 const config = require('../../config/default');
 const CleanupFileJob = require('./cleanup-file');
-const LocalStorageProvider = require('../services/LocalStorageProvider');
-const { getRootFolder } = require('../../config/default');
+const { resolveStorageProvider } = require('../core/storage-provider-resolver');
 
 const initializeJobs = async () => {
 	const cleanupCron = config.FILE_CLEANUP_CRON || process.env.FILE_CLEANUP_CRON;
 
-	const localStorageProvider = new LocalStorageProvider(getRootFolder());
-	const cleanupFileJob = new CleanupFileJob(localStorageProvider);
+	const storageProvider = resolveStorageProvider();
+	const cleanupFileJob = new CleanupFileJob(storageProvider);
 
 	scheduler.scheduleJob('file-cleanup', cleanupCron, () => cleanupFileJob.execute());
 	scheduler.startJob('file-cleanup');

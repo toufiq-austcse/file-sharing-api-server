@@ -1,4 +1,4 @@
-const { FILE_CLEANUP_INACTIVITY_MINUTES } = require('../api/files/config');
+const { FILE_CLEANUP_INACTIVITY_MINUTES } = require('../../config/default');
 
 class CleanUpFileJob {
 	constructor(storageProvider) {

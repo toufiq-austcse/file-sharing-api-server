@@ -96,6 +96,7 @@ class LocalStorageProvider extends StorageProvider {
 				try {
 					const stats = await fs.stat(filePath);
 					const inactiveDuration = now - stats.atimeMs;
+					console.log('inactiveDuration ', inactiveDuration, inactivityPeriodMs);
 
 					if (inactiveDuration > inactivityPeriodMs) {
 						await fs.unlink(filePath);

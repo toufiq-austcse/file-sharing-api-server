@@ -56,7 +56,7 @@ class GoogleCloudStorageProvider extends StorageProvider {
 		const [metaContent] = await metaFile.download();
 		const metaData = JSON.parse(metaContent.toString());
 
-		await metaFile.setMetadata({
+		let res = await metaFile.setMetadata({
 			metadata: {
 				lastAccessed: currentTime.toISOString(),
 			},
