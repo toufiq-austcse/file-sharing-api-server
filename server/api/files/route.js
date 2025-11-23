@@ -8,19 +8,13 @@ const upload = multer({
 	}),
 });
 const router = express.Router({ mergeParams: true });
-
-const LocalStorageProvider = require('../../services/LocalStorageProvider');
-const GoogleCloudStorageProvider = require('../../services/GoogleCloudStorageProvider');
 const FileService = require('../../services/FileService');
 const { uploadLimiter } = require('../../middleware/upload-limiter');
 const { downloadLimiter } = require('../../middleware/download-limiter');
-const { getRootFolder } = require('../../../config/default');
+const { resolveStorageProvider } = require('../../core/storage-provider-resolver');
 
-//const localStorageProvider = new LocalStorageProvider(getRootFolder());
-const googleCloudStorageProvider = new GoogleCloudStorageProvider(
-	'/Users/toufiqulislam/projects/personal/meldcx/file-server-task/gcp-config.json'
-);
-const fileService = new FileService(googleCloudStorageProvider);
+const storageProver = resolveStorageProvider();
+const fileService = new FileService(storageProver);
 
 router.post('/', uploadLimiter({}), upload.single('file'), async (req, res) => {
 	try {

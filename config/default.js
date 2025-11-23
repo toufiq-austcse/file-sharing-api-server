@@ -3,6 +3,9 @@ const DEFAULT_ROOT_FOLDER = './uploads';
 const getRootFolder = () => {
 	return process.env.ROOT_FOLDER || DEFAULT_ROOT_FOLDER;
 };
+const getProvider = () => {
+	return process.env.PROVIDER || 'local';
+};
 module.exports = {
 	SERVER_NAME: 'file-sharing-api-server',
 	DEFAULT_PORT: 3000,
@@ -13,4 +16,5 @@ module.exports = {
 	FILE_CLEANUP_INACTIVITY_MINUTES: 2,
 	FILE_CLEANUP_CRON: '* * * * *',
 	getRootFolder,
+	getProvider,
 };
