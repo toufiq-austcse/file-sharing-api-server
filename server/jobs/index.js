@@ -1,6 +1,6 @@
 const scheduler = require('../core/scheduler');
 const config = require('../../config/default');
-const CleanupFileJob = require('./cleanupFile');
+const CleanupFileJob = require('./cleanup-file');
 const LocalStorageProvider = require('../services/LocalStorageProvider');
 const { getRootFolder } = require('../../config/default');
 
