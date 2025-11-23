@@ -25,6 +25,10 @@ class FileService {
 	async deleteFile(privateKey) {
 		return this.storage.delete(privateKey);
 	}
+
+	async fileExists(publicKey) {
+		return this.storage.exists(publicKey);
+	}
 }
 
 module.exports = FileService;
