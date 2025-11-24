@@ -170,39 +170,43 @@ describe('GoogleCloudStorageProvider', () => {
 			expect(result).toBe(false);
 		});
 	});
-
 	describe('cleanupInactiveFiles', () => {
+		beforeEach(() => {
+			// Clear the static accessMap before each test
+			GoogleCloudStorageProvider.accessMap.clear();
+		});
+
 		it('deletes old files that have not been accessed recently', async () => {
 			const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
-			provider.accessMap.set('old-file', tenMinutesAgo);
+			GoogleCloudStorageProvider.accessMap.set('old-file', tenMinutesAgo);
 
 			mockFile.exists.mockResolvedValue([true]);
 
 			await provider.cleanupInactiveFiles(5 * 60 * 1000);
 
 			expect(mockFile.delete).toHaveBeenCalled();
-			expect(provider.accessMap.has('old-file')).toBe(false);
+			expect(GoogleCloudStorageProvider.accessMap.has('old-file')).toBe(false);
 		});
 
 		it('should not delete files within threshold period', async () => {
 			const recentTime = new Date();
-			provider.accessMap.set('new-file', recentTime);
+			GoogleCloudStorageProvider.accessMap.set('new-file', recentTime);
 
 			await provider.cleanupInactiveFiles(10 * 60 * 1000);
 
 			expect(mockFile.delete).not.toHaveBeenCalled();
-			expect(provider.accessMap.has('new-file')).toBe(true);
+			expect(GoogleCloudStorageProvider.accessMap.has('new-file')).toBe(true);
 		});
 
 		it('should remove file from accessMap if it does not exist in bucket', async () => {
 			const oldTime = new Date(Date.now() - 10 * 60 * 1000);
-			provider.accessMap.set('missing-file', oldTime);
+			GoogleCloudStorageProvider.accessMap.set('missing-file', oldTime);
 
 			mockFile.exists.mockResolvedValue([false]);
 
 			await provider.cleanupInactiveFiles(5 * 60 * 1000);
 
-			expect(provider.accessMap.has('missing-file')).toBe(false);
+			expect(GoogleCloudStorageProvider.accessMap.has('missing-file')).toBe(false);
 			expect(mockFile.delete).not.toHaveBeenCalled();
 		});
 	});

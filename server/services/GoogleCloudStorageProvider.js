@@ -7,6 +7,8 @@ const path = require('path');
  * GoogleCloudStorageProvider implements file storage using Google Cloud Storage.
  */
 class GoogleCloudStorageProvider extends StorageProvider {
+	static accessMap = new Map();
+
 	/**
 	 * Creates an instance of GoogleCloudStorageProvider
 	 * @param gcpConfigFilePath
@@ -22,7 +24,6 @@ class GoogleCloudStorageProvider extends StorageProvider {
 
 		this.storage = new Storage({ keyFilename: keyFilePath });
 		this.bucket = this.storage.bucket(this.bucketName);
-		this.accessMap = new Map();
 	}
 
 	/**
@@ -59,7 +60,7 @@ class GoogleCloudStorageProvider extends StorageProvider {
 			contentType: 'application/json',
 		});
 
-		this.accessMap.set(publicKey, new Date());
+		GoogleCloudStorageProvider.accessMap.set(publicKey, new Date());
 
 		return { publicKey, privateKey };
 	}
@@ -86,7 +87,7 @@ class GoogleCloudStorageProvider extends StorageProvider {
 
 		const file = this.bucket.file(filePath);
 		const stream = file.createReadStream();
-		this.accessMap.set(publicKey, new Date());
+		GoogleCloudStorageProvider.accessMap.set(publicKey, new Date());
 
 		return {
 			stream,
@@ -111,7 +112,7 @@ class GoogleCloudStorageProvider extends StorageProvider {
 				if (metaData.private_key === privateKey) {
 					await this.bucket.file(metaData.public_key).delete();
 					await file.delete();
-					this.accessMap.delete(privateKey);
+					GoogleCloudStorageProvider.accessMap.delete(privateKey);
 					return true;
 				}
 			}
@@ -139,12 +140,13 @@ class GoogleCloudStorageProvider extends StorageProvider {
 	 */
 	async cleanupInactiveFiles(inactivityPeriodMs) {
 		try {
-			console.log('Starting cleanup of inactive files...');
+			console.log('Starting cleanup of inactive files... ');
 			const now = Date.now();
 			let deletedCount = 0;
 
-			for (const [publicKey, lastAccessTime] of this.accessMap.entries()) {
+			for (const [publicKey, lastAccessTime] of GoogleCloudStorageProvider.accessMap.entries()) {
 				const inactiveDuration = now - lastAccessTime.getTime();
+				console.log('Checking file:', publicKey, 'Inactive for (ms):', inactiveDuration);
 
 				if (inactiveDuration > inactivityPeriodMs) {
 					try {
@@ -156,14 +158,14 @@ class GoogleCloudStorageProvider extends StorageProvider {
 							await file.delete();
 							await metaFile.delete();
 
-							this.accessMap.delete(publicKey);
+							GoogleCloudStorageProvider.accessMap.delete(publicKey);
 							deletedCount++;
 
 							console.log(
 								`Deleted inactive file: ${publicKey} (inactive for ${Math.floor(inactiveDuration / (60 * 1000))} minutes)`
 							);
 						} else {
-							this.accessMap.delete(publicKey);
+							GoogleCloudStorageProvider.accessMap.delete(publicKey);
 						}
 					} catch (error) {
 						console.error(`Error deleting file ${publicKey}:`, error);
