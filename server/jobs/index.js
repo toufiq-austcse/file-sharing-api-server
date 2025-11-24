@@ -3,6 +3,10 @@ const config = require('../../config/default');
 const CleanupFileJob = require('./cleanup-file');
 const { resolveStorageProvider } = require('../core/storage-provider-resolver');
 
+/**
+ * Initializes and starts background jobs.
+ * @returns {Promise<void>}
+ */
 const initializeJobs = async () => {
 	const cleanupCron = config.FILE_CLEANUP_CRON || process.env.FILE_CLEANUP_CRON;
 
@@ -15,6 +19,10 @@ const initializeJobs = async () => {
 	console.log('Background jobs initialized');
 };
 
+/**
+ * Stops all background jobs.
+ * @returns {Promise<void>}
+ */
 const stopJobs = async () => {
 	scheduler.stopAll();
 	console.log('All background jobs stopped');

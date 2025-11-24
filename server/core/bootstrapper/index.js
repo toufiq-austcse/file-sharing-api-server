@@ -2,8 +2,8 @@ const cors = require('cors');
 const express = require('express');
 
 /**
- * Initialize the express application.
- * @returns {Promise<Express>}
+ * Initializes the express app with necessary middlewares and routes
+ * @returns {Promise<*|Express>}
  */
 const initialize = async () => {
 	let app = express();

@@ -16,6 +16,9 @@ const { resolveStorageProvider } = require('../../core/storage-provider-resolver
 const storageProver = resolveStorageProvider();
 const fileService = new FileService(storageProver);
 
+/**
+ * File upload route
+ */
 router.post('/', uploadLimiter({}), upload.single('file'), async (req, res) => {
 	try {
 		if (!req.file) {
@@ -28,6 +31,9 @@ router.post('/', uploadLimiter({}), upload.single('file'), async (req, res) => {
 	}
 });
 
+/**
+ * File download route
+ */
 router.get('/:publicKey', downloadLimiter({}), async (req, res) => {
 	try {
 		const publicKey = req.params.publicKey;
@@ -49,6 +55,9 @@ router.get('/:publicKey', downloadLimiter({}), async (req, res) => {
 	}
 });
 
+/**
+ * File deletion route
+ */
 router.delete('/:privateKey', async (req, res) => {
 	try {
 		const privateKey = req.params.privateKey;

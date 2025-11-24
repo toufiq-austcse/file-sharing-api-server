@@ -2,6 +2,10 @@ const LocalStorageProvider = require('../../services/LocalStorageProvider');
 const GoogleCloudStorageProvider = require('../../services/GoogleCloudStorageProvider');
 const { getProvider, getRootFolder } = require('../../../config/default');
 
+/**
+ * Resolves and returns the appropriate storage provider based on configuration.
+ * @returns {LocalStorageProvider|GoogleCloudStorageProvider}
+ */
 const resolveStorageProvider = () => {
 	const provider = getProvider();
 	if (provider === 'local') {

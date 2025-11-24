@@ -3,12 +3,26 @@ const path = require('path');
 const fs = require('fs').promises;
 const { createReadStream } = require('fs');
 
+/**
+ * LocalStorageProvider implements file storage using the local filesystem.
+ */
 class LocalStorageProvider extends StorageProvider {
+	/**
+	 * Creates an instance of LocalStorageProvider.
+	 * @param rootFolder
+	 */
 	constructor(rootFolder) {
 		super();
 		this.rootFolder = rootFolder;
 	}
 
+	/**
+	 * Uploads a file to local storage.
+	 * @param file
+	 * @param publicKey
+	 * @param privateKey
+	 * @returns {Promise<{publicKey: string, privateKey: string}>}
+	 */
 	async upload(file, publicKey, privateKey) {
 		const filePath = path.join(this.rootFolder, publicKey);
 		const metaPath = path.join(this.rootFolder, `${publicKey}.meta.json`);
@@ -33,6 +47,11 @@ class LocalStorageProvider extends StorageProvider {
 		return { publicKey, privateKey };
 	}
 
+	/**
+	 * Downloads a file from local storage.
+	 * @param publicKey
+	 * @returns {Promise<{stream: ReadStream, mime_type: string, original_name: string}>}
+	 */
 	async download(publicKey) {
 		const currentTime = new Date();
 		const filePath = path.join(this.rootFolder, publicKey);
@@ -50,6 +69,11 @@ class LocalStorageProvider extends StorageProvider {
 		};
 	}
 
+	/**
+	 * Deletes a file from local storage using the private key.
+	 * @param privateKey
+	 * @returns {Promise<boolean>}
+	 */
 	async delete(privateKey) {
 		const files = await fs.readdir(this.rootFolder);
 
@@ -69,6 +93,11 @@ class LocalStorageProvider extends StorageProvider {
 		return false;
 	}
 
+	/**
+	 * Checks if a file exists in local storage.
+	 * @param publicKey
+	 * @returns {Promise<boolean>}
+	 */
 	async exists(publicKey) {
 		const filePath = path.join(this.rootFolder, publicKey);
 		try {
@@ -79,6 +108,11 @@ class LocalStorageProvider extends StorageProvider {
 		}
 	}
 
+	/**
+	 * Cleans up inactive files that have not been accessed within the specified inactivity period.
+	 * @param inactivityPeriodMs
+	 * @returns {Promise<void>}
+	 */
 	async cleanupInactiveFiles(inactivityPeriodMs) {
 		try {
 			console.log('Starting cleanup of inactive files...');

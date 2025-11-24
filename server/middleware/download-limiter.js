@@ -12,6 +12,11 @@ const DEFAULT_DOWNLOAD_LIMIT_IN_BYTES = Number(
 	process.env.DAILY_DOWNLOAD_LIMIT_BYTES || config.DAILY_DOWNLOAD_LIMIT_BYTES
 );
 
+/**
+ * Download limiter middleware
+ * @param options
+ * @returns {(function(*, *, *): (*|undefined))|*}
+ */
 const downloadLimiter = (options = {}) => {
 	const downloadLimitInBytes = Number(options.downloadLimitInBytes ?? DEFAULT_DOWNLOAD_LIMIT_IN_BYTES);
 	const { getUsageForIPAndDay } = createUsageTracker();

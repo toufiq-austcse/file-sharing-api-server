@@ -3,7 +3,14 @@ const { Storage } = require('@google-cloud/storage');
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * GoogleCloudStorageProvider implements file storage using Google Cloud Storage.
+ */
 class GoogleCloudStorageProvider extends StorageProvider {
+	/**
+	 * Creates an instance of GoogleCloudStorageProvider
+	 * @param gcpConfigFilePath
+	 */
 	constructor(gcpConfigFilePath) {
 		super();
 
@@ -17,6 +24,13 @@ class GoogleCloudStorageProvider extends StorageProvider {
 		this.bucket = this.storage.bucket(this.bucketName);
 	}
 
+	/**
+	 * Uploads a file to Google Cloud Storage.
+	 * @param file
+	 * @param publicKey
+	 * @param privateKey
+	 * @returns {Promise<{publicKey: string, privateKey: string}>}
+	 */
 	async upload(file, publicKey, privateKey) {
 		const filePath = publicKey;
 		const metaPath = `${publicKey}.meta.json`;
@@ -47,6 +61,11 @@ class GoogleCloudStorageProvider extends StorageProvider {
 		return { publicKey, privateKey };
 	}
 
+	/**
+	 * Downloads a file from Google Cloud Storage.
+	 * @param publicKey
+	 * @returns {Promise<{stream: ReadStream, mime_type: string, original_name: string}>}
+	 */
 	async download(publicKey) {
 		const currentTime = new Date();
 		const filePath = publicKey;
@@ -72,6 +91,11 @@ class GoogleCloudStorageProvider extends StorageProvider {
 		};
 	}
 
+	/**
+	 * Deletes a file from Google Cloud Storage using the private key.
+	 * @param privateKey
+	 * @returns {Promise<boolean>}
+	 */
 	async delete(privateKey) {
 		const [files] = await this.bucket.getFiles();
 
@@ -91,12 +115,22 @@ class GoogleCloudStorageProvider extends StorageProvider {
 		return false;
 	}
 
+	/**
+	 * Checks if a file exists in Google Cloud Storage.
+	 * @param publicKey
+	 * @returns {Promise<boolean>}
+	 */
 	async exists(publicKey) {
 		const file = this.bucket.file(publicKey);
 		const [exists] = await file.exists();
 		return exists;
 	}
 
+	/**
+	 * Cleans up files that have been inactive for a specified period.
+	 * @param inactivityPeriodMs
+	 * @returns {Promise<void>}
+	 */
 	async cleanupInactiveFiles(inactivityPeriodMs) {
 		try {
 			console.log('Starting cleanup of inactive files...');

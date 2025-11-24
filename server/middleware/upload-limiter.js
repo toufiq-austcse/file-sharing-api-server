@@ -4,6 +4,11 @@ const { getStartOfUTCDayString, createUsageTracker, getClientIP } = require('../
 
 const DEFAULT_UPLOAD_LIMIT_IN_BYTES = Number(process.env.DAILY_UPLOAD_LIMIT_BYTES || config.DAILY_UPLOAD_LIMIT_BYTES);
 
+/**
+ * Upload limiter middleware
+ * @param options
+ * @returns {(function(*, *, *): (*|undefined))|*}
+ */
 const uploadLimiter = (options = {}) => {
 	const uploadLimitInBytes = Number(options.uploadLimitInBytes ?? DEFAULT_UPLOAD_LIMIT_IN_BYTES);
 	const { getUsageForIPAndDay } = createUsageTracker();

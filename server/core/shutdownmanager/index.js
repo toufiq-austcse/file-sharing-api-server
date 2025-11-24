@@ -1,8 +1,8 @@
 const config = require('../../../config/default');
-
 /**
- * Manage graceful shutdown of the server.
+ * Manages graceful shutdown of the server.
  * @param server
+ * @param stopJobs
  */
 const manage = (server, stopJobs) => {
 	let connections = [];
