@@ -12,28 +12,28 @@ describe('Config Default', () => {
 	});
 
 	describe('getRootFolder Function', () => {
-		it('should return default folder when ROOT_FOLDER env var is not set', () => {
-			delete process.env.ROOT_FOLDER;
+		it('should return default folder when FOLDER env var is not set', () => {
+			delete process.env.FOLDER;
 			expect(config.getRootFolder()).toBe('./uploads');
 		});
 
-		it('should return custom folder when ROOT_FOLDER env var is set', () => {
-			process.env.ROOT_FOLDER = '/custom/uploads';
+		it('should return custom folder when FOLDER env var is set', () => {
+			process.env.FOLDER = '/custom/uploads';
 			expect(config.getRootFolder()).toBe('/custom/uploads');
 		});
 
-		it('should handle empty ROOT_FOLDER env var', () => {
-			process.env.ROOT_FOLDER = '';
+		it('should handle empty FOLDER env var', () => {
+			process.env.FOLDER = '';
 			expect(config.getRootFolder()).toBe('./uploads');
 		});
 
-		it('should handle relative paths in ROOT_FOLDER', () => {
-			process.env.ROOT_FOLDER = '../data/files';
+		it('should handle relative paths in FOLDER', () => {
+			process.env.FOLDER = '../data/files';
 			expect(config.getRootFolder()).toBe('../data/files');
 		});
 
-		it('should handle absolute paths in ROOT_FOLDER', () => {
-			process.env.ROOT_FOLDER = '/var/www/uploads';
+		it('should handle absolute paths in FOLDER', () => {
+			process.env.FOLDER = '/var/www/uploads';
 			expect(config.getRootFolder()).toBe('/var/www/uploads');
 		});
 	});
