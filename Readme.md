@@ -192,15 +192,15 @@ curl -X DELETE http://localhost:3000/files/xyz789uvw012
 
 All configuration is done through environment variables. Copy `.env.sample` to `.env` and configure as needed.
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `PORT` | Server port number | `3000` | No |
-| `PROVIDER` | Storage provider (`local` or `google`) | `local` | No |
-| `FOLDER` | Local storage directory path | `./uploads` | Only for local provider |
-| `CONFIG` | Path to GCP configuration JSON file | - | Only for google provider |
-| `DAILY_UPLOAD_LIMIT_BYTES` | Daily upload limit per IP (in bytes) | `2081228` (~2 MB) | No |
-| `DAILY_DOWNLOAD_LIMIT_BYTES` | Daily download limit per IP (in bytes) | `2081052` (~2 MB) | No |
-| `FILE_CLEANUP_INACTIVITY_MINUTES` | Minutes before inactive files are deleted | `2` | No |
+| Variable | Description | Default                    | Required |
+|----------|-------------|----------------------------|----------|
+| `PORT` | Server port number | `3000`                     | No |
+| `PROVIDER` | Storage provider (`local` or `google`) | `local`                    | No |
+| `FOLDER` | Local storage directory path | `./uploads`                | Only for local provider |
+| `CONFIG` | Path to GCP configuration JSON file | -                          | Only for google provider |
+| `DAILY_UPLOAD_LIMIT_BYTES` | Daily upload limit per IP (in bytes) | `10485760` (~10 MB)         | No |
+| `DAILY_DOWNLOAD_LIMIT_BYTES` | Daily download limit per IP (in bytes) | `10485760` (~10 MB)         | No |
+| `FILE_CLEANUP_INACTIVITY_MINUTES` | Minutes before inactive files are deleted | `2`                        | No |
 | `FILE_CLEANUP_CRON` | Cron schedule for cleanup job | `* * * * *` (every minute) | No |
 
 ### Storage Provider Configuration
