@@ -200,7 +200,7 @@ describe('LocalStorageProvider', () => {
 		});
 	});
 
-	describe('xcleanupInactiveFiles', () => {
+	describe('cleanupInactiveFiles', () => {
 		beforeEach(async () => {
 			const oldFile = {
 				path: path.join(__dirname, 'old-temp.txt'),

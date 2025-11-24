@@ -22,6 +22,7 @@ class GoogleCloudStorageProvider extends StorageProvider {
 
 		this.storage = new Storage({ keyFilename: keyFilePath });
 		this.bucket = this.storage.bucket(this.bucketName);
+		this.accessMap = new Map();
 	}
 
 	/**
@@ -58,6 +59,8 @@ class GoogleCloudStorageProvider extends StorageProvider {
 			contentType: 'application/json',
 		});
 
+		this.accessMap.set(publicKey, new Date());
+
 		return { publicKey, privateKey };
 	}
 
@@ -83,6 +86,7 @@ class GoogleCloudStorageProvider extends StorageProvider {
 
 		const file = this.bucket.file(filePath);
 		const stream = file.createReadStream();
+		this.accessMap.set(publicKey, new Date());
 
 		return {
 			stream,
@@ -107,6 +111,7 @@ class GoogleCloudStorageProvider extends StorageProvider {
 				if (metaData.private_key === privateKey) {
 					await this.bucket.file(metaData.public_key).delete();
 					await file.delete();
+					this.accessMap.delete(privateKey);
 					return true;
 				}
 			}
@@ -128,40 +133,41 @@ class GoogleCloudStorageProvider extends StorageProvider {
 
 	/**
 	 * Cleans up files that have been inactive for a specified period.
-	 * @param inactivityPeriodMs
+	 * Uses in-memory access tracking to determine file activity.
+	 * @param inactivityPeriodMs - Milliseconds of inactivity before deletion
 	 * @returns {Promise<void>}
 	 */
 	async cleanupInactiveFiles(inactivityPeriodMs) {
 		try {
 			console.log('Starting cleanup of inactive files...');
-			const [files] = await this.bucket.getFiles();
 			const now = Date.now();
 			let deletedCount = 0;
 
-			for (const file of files) {
-				if (file.name.endsWith('.meta.json')) continue;
+			for (const [publicKey, lastAccessTime] of this.accessMap.entries()) {
+				const inactiveDuration = now - lastAccessTime.getTime();
 
-				try {
-					const [metadata] = await file.getMetadata();
-					const lastAccessed = metadata.metadata?.lastAccessed
-						? new Date(metadata.metadata.lastAccessed).getTime()
-						: new Date(metadata.timeCreated).getTime();
+				if (inactiveDuration > inactivityPeriodMs) {
+					try {
+						const file = this.bucket.file(publicKey);
+						const metaFile = this.bucket.file(`${publicKey}.meta.json`);
 
-					const inactiveDuration = now - lastAccessed;
+						const [fileExists] = await file.exists();
+						if (fileExists) {
+							await file.delete();
+							await metaFile.delete();
 
-					if (inactiveDuration > inactivityPeriodMs) {
-						const metaFile = this.bucket.file(`${file.name}.meta.json`);
+							this.accessMap.delete(publicKey);
+							deletedCount++;
 
-						await file.delete();
-						await metaFile.delete();
-
-						deletedCount++;
-						console.log(
-							`Deleted inactive file and metadata: ${file.name} (inactive for ${Math.floor(inactiveDuration / (60 * 1000))} minutes)`
-						);
+							console.log(
+								`Deleted inactive file: ${publicKey} (inactive for ${Math.floor(inactiveDuration / (60 * 1000))} minutes)`
+							);
+						} else {
+							this.accessMap.delete(publicKey);
+						}
+					} catch (error) {
+						console.error(`Error deleting file ${publicKey}:`, error);
 					}
-				} catch (error) {
-					console.error(`Error processing file ${file.name}:`, error);
 				}
 			}
 

@@ -172,49 +172,38 @@ describe('GoogleCloudStorageProvider', () => {
 	});
 
 	describe('cleanupInactiveFiles', () => {
-		it('should delete inactive files older than threshold', async () => {
-			const oldFile = {
-				name: 'old-file',
-				getMetadata: jest.fn().mockResolvedValue([
-					{
-						timeCreated: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-						metadata: {},
-					},
-				]),
-				delete: jest.fn().mockResolvedValue(),
-			};
+		it('deletes old files that have not been accessed recently', async () => {
+			const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+			provider.accessMap.set('old-file', tenMinutesAgo);
 
-			const metaFile = {
-				name: 'old-file.meta.json',
-				delete: jest.fn().mockResolvedValue(),
-			};
-
-			mockBucket.getFiles.mockResolvedValue([[oldFile, metaFile]]);
-			mockBucket.file.mockReturnValue(metaFile);
+			mockFile.exists.mockResolvedValue([true]);
 
 			await provider.cleanupInactiveFiles(5 * 60 * 1000);
 
-			expect(oldFile.delete).toHaveBeenCalled();
-			expect(metaFile.delete).toHaveBeenCalled();
+			expect(mockFile.delete).toHaveBeenCalled();
+			expect(provider.accessMap.has('old-file')).toBe(false);
 		});
 
 		it('should not delete files within threshold period', async () => {
-			const newFile = {
-				name: 'new-file',
-				getMetadata: jest.fn().mockResolvedValue([
-					{
-						timeCreated: new Date().toISOString(),
-						metadata: {},
-					},
-				]),
-				delete: jest.fn(),
-			};
-
-			mockBucket.getFiles.mockResolvedValue([[newFile]]);
+			const recentTime = new Date();
+			provider.accessMap.set('new-file', recentTime);
 
 			await provider.cleanupInactiveFiles(10 * 60 * 1000);
 
-			expect(newFile.delete).not.toHaveBeenCalled();
+			expect(mockFile.delete).not.toHaveBeenCalled();
+			expect(provider.accessMap.has('new-file')).toBe(true);
+		});
+
+		it('should remove file from accessMap if it does not exist in bucket', async () => {
+			const oldTime = new Date(Date.now() - 10 * 60 * 1000);
+			provider.accessMap.set('missing-file', oldTime);
+
+			mockFile.exists.mockResolvedValue([false]);
+
+			await provider.cleanupInactiveFiles(5 * 60 * 1000);
+
+			expect(provider.accessMap.has('missing-file')).toBe(false);
+			expect(mockFile.delete).not.toHaveBeenCalled();
 		});
 	});
 });
