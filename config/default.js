@@ -1,7 +1,7 @@
 const DEFAULT_ROOT_FOLDER = './uploads';
 const DEFAULT_PROVIDER = 'local';
 const getRootFolder = () => {
-	return process.env.ROOT_FOLDER || DEFAULT_ROOT_FOLDER;
+	return process.env.FOLDER || DEFAULT_ROOT_FOLDER;
 };
 const getProvider = () => {
 	return process.env.PROVIDER || DEFAULT_PROVIDER;
