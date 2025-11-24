@@ -1,7 +1,8 @@
 const CleanUpFileJob = require('../cleanup-file');
+const config = require('../../../config/default');
 
-jest.mock('../../api/files/config', () => ({
-	FILE_CLEANUP_INACTIVITY_MINUTES: 60,
+jest.mock('../../../config/default', () => ({
+	FILE_CLEANUP_INACTIVITY_MINUTES: 2,
 }));
 
 describe('CleanUpFileJob', () => {
@@ -18,7 +19,7 @@ describe('CleanUpFileJob', () => {
 	it('should cleanup inactive files with default timeout', async () => {
 		await cleanupJob.execute();
 
-		const expectedTimeout = 60 * 60 * 1000;
+		const expectedTimeout = config.FILE_CLEANUP_INACTIVITY_MINUTES * 60 * 1000;
 		expect(mockStorage.cleanupInactiveFiles).toHaveBeenCalledWith(expectedTimeout);
 	});
 
@@ -27,7 +28,7 @@ describe('CleanUpFileJob', () => {
 
 		await cleanupJob.execute();
 
-		const expectedTimeout = 30 * 60 * 1000;
+		const expectedTimeout = process.env.FILE_CLEANUP_INACTIVITY_MINUTES * 60 * 1000;
 		expect(mockStorage.cleanupInactiveFiles).toHaveBeenCalledWith(expectedTimeout);
 
 		delete process.env.FILE_CLEANUP_INACTIVITY_MINUTES;
