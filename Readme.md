@@ -196,7 +196,7 @@ All configuration is done through environment variables. Copy `.env.sample` to `
 |----------|-------------|---------|----------|
 | `PORT` | Server port number | `3000` | No |
 | `PROVIDER` | Storage provider (`local` or `google`) | `local` | No |
-| `ROOT_FOLDER` | Local storage directory path | `./uploads` | Only for local provider |
+| `FOLDER` | Local storage directory path | `./uploads` | Only for local provider |
 | `CONFIG` | Path to GCP configuration JSON file | - | Only for google provider |
 | `DAILY_UPLOAD_LIMIT_BYTES` | Daily upload limit per IP (in bytes) | `2081228` (~2 MB) | No |
 | `DAILY_DOWNLOAD_LIMIT_BYTES` | Daily download limit per IP (in bytes) | `2081052` (~2 MB) | No |
@@ -211,7 +211,7 @@ When using `PROVIDER=local`:
 
 ```env
 PROVIDER=local
-ROOT_FOLDER=./uploads
+FOLDER=./uploads
 ```
 
 Files are stored in the specified local directory. Make sure the application has write permissions.
