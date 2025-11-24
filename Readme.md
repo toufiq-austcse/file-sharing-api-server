@@ -5,7 +5,7 @@ A Node.js-based REST API server for file sharing with support for local storage 
 
 ## Prerequisites
 
-- Node.js (>= 20.0.0)
+- Node.js 
 - npm or pnpm
 - (Optional) Google Cloud Platform account with Storage bucket
 
