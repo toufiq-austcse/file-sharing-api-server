@@ -14,8 +14,8 @@ A Node.js-based REST API server for file sharing with support for local storage 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/toufiq-austcse/file-sharing-server.git
-cd file-sharing-server
+git clone https://github.com/toufiq-austcse/file-sharing-api-server.git
+cd file-sharing-api-server
 ```
 
 ### 2. Install Dependencies
